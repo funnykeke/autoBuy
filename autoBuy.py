@@ -148,9 +148,11 @@ if __name__ == '__main__':
                                 driver.execute_script('document.getElementById("turbo-checkout-pyo-button").click()')
                             except:
                                 pass
+                        time.sleep(15)
                     except Exception as e3:
                         logging.info("Error in automatic purchase")
                         logging.error(e3)
+                        time.sleep(15)
                 if count % 90 == 0:
                     driver.switch_to.window(handles[0])
                     driver.refresh()
