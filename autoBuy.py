@@ -1,5 +1,6 @@
 # coding=utf-8
 import base64
+import re
 import threading
 import time
 import requests
@@ -10,7 +11,7 @@ import logging
 import settings
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.webdriver import DesiredCapabilities, ActionChains
+from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -72,6 +73,7 @@ if __name__ == '__main__':
     time.sleep(5)
     handles = driver.window_handles
     count = 0
+    while_count = 0
     captcha_count = 0
     driver.switch_to.window(handles[1])
     t1 = threading.Thread(target=deletAsin)
@@ -138,26 +140,25 @@ if __name__ == '__main__':
                     driver.switch_to.window(handle_temp)
                     try:
                         element1 = wait.until(EC.presence_of_element_located((By.ID, "buy-now-button")), message="111")
-                        # driver.execute_script(
-                        #     'document.getElementById("buy-now-button").click()')
                         wait.until(lambda driver: driver.find_element_by_id("buy-now-button"))
-                        e1 = driver.find_element_by_id("buy-now-button")
-                        ActionChains(driver).move_by_offset(e1.location['x'] + e1.size['width'] / 2,
-                                                            e1.location['y'] + e1.size['height'] / 2).click().perform()
-                        # c = 30
-                        # while c > 0:
-                        #     try:
-                        #         c = c - 1
-                        #         time.sleep(0.2)
-                        #         driver.execute_script('document.getElementById("turbo-checkout-pyo-button").click()')
-                        #     except:
-                        #         pass
-                        element2 = wait.until(EC.presence_of_element_located((By.ID, "turbo-checkout-pyo-button")),
-                                              message="222")
-                        wait.until(lambda driver: driver.find_element_by_id("turbo-checkout-pyo-button"))
-                        e2 = driver.find_element_by_id("buy-now-button")
-                        ActionChains(driver).move_by_offset(e2.location['x'] + e2.size['width'] / 2,
-                                                            e2.location['y'] + e2.size['height'] / 2).click().perform()
+                        time.sleep(1)
+                        driver.execute_script('document.getElementById("buy-now-button").click()')
+                        while not re.findall("Place your order", driver.page_source) and not re.findall(
+                                "turbo-checkout-iframe", driver.page_source) and while_count < 100:
+                            time.sleep(0.1)
+                            while_count += 1
+                        while_count = 0
+                        time.sleep(1)
+                        if re.findall("Place your order", driver.page_source):
+                            time.sleep(1)
+                            wait.until(lambda driver: driver.find_element_by_id("bottomSubmitOrderButtonId-announce"))
+                            driver.execute_script(
+                                'document.getElementById("bottomSubmitOrderButtonId-announce").click()')
+                        if re.findall("turbo-checkout-iframe", driver.page_source):
+                            driver.switch_to.frame("turbo-checkout-iframe")
+                            wait.until(lambda driver: driver.find_element_by_id("turbo-checkout-place-order-button"))
+                            driver.execute_script('document.getElementById("turbo-checkout-pyo-button").click()')
+                        logging.info("buy successfully!")
                         time.sleep(15)
                     except Exception as e3:
                         logging.info("Error in automatic purchase")
