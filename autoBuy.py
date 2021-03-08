@@ -10,7 +10,7 @@ import logging
 import settings
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.webdriver import DesiredCapabilities
+from selenium.webdriver import DesiredCapabilities, ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -31,7 +31,7 @@ prefs = {
 }
 chrome_options.add_experimental_option("prefs", prefs)
 chrome_options.add_argument(f'--user-data-dir={path}')
-chrome_options.add_argument("--disable-application-cache")
+# chrome_options.add_argument("--disable-application-cache")
 capa = DesiredCapabilities.CHROME
 capa["pageLoadStrategy"] = "none"
 driver = webdriver.Chrome("chromedriver.exe", desired_capabilities=capa, options=chrome_options)  #
@@ -86,7 +86,7 @@ if __name__ == '__main__':
             html = HTML(text)
             now_asins = {}
             try:
-                now_asins = set(html.xpath("//div/@data-asin"))-{'" data-index=',''}
+                now_asins = set(html.xpath("//div/@data-asin")) - {'" data-index=', ''}
             except:
                 pass
             for count in range(2):
@@ -100,7 +100,7 @@ if __name__ == '__main__':
                     text = driver.page_source
                     html = HTML(text)
                     try:
-                        now_asins = set(html.xpath("//div/@data-asin"))-{'" data-index=',''}
+                        now_asins = set(html.xpath("//div/@data-asin")) - {'" data-index=', ''}
                         if html.xpath("//input[@id='captchacharacters']"):
                             if captcha_count > 1:
                                 t = threading.Thread(target=sound)
@@ -137,17 +137,27 @@ if __name__ == '__main__':
                     handle_temp = driver.window_handles[-1]
                     driver.switch_to.window(handle_temp)
                     try:
-                        element = wait.until(EC.presence_of_element_located((By.ID, "buy-now-button")), message="111")
-                        driver.execute_script(
-                            'document.getElementById("buy-now-button").click()')
-                        c = 30
-                        while c > 0:
-                            try:
-                                c = c - 1
-                                time.sleep(0.2)
-                                driver.execute_script('document.getElementById("turbo-checkout-pyo-button").click()')
-                            except:
-                                pass
+                        element1 = wait.until(EC.presence_of_element_located((By.ID, "buy-now-button")), message="111")
+                        # driver.execute_script(
+                        #     'document.getElementById("buy-now-button").click()')
+                        wait.until(lambda driver: driver.find_element_by_id("buy-now-button"))
+                        e1 = driver.find_element_by_id("buy-now-button")
+                        ActionChains(driver).move_by_offset(e1.location['x'] + e1.size['width'] / 2,
+                                                            e1.location['y'] + e1.size['height'] / 2).click().perform()
+                        # c = 30
+                        # while c > 0:
+                        #     try:
+                        #         c = c - 1
+                        #         time.sleep(0.2)
+                        #         driver.execute_script('document.getElementById("turbo-checkout-pyo-button").click()')
+                        #     except:
+                        #         pass
+                        element2 = wait.until(EC.presence_of_element_located((By.ID, "turbo-checkout-pyo-button")),
+                                              message="222")
+                        wait.until(lambda driver: driver.find_element_by_id("turbo-checkout-pyo-button"))
+                        e2 = driver.find_element_by_id("buy-now-button")
+                        ActionChains(driver).move_by_offset(e2.location['x'] + e2.size['width'] / 2,
+                                                            e2.location['y'] + e2.size['height'] / 2).click().perform()
                         time.sleep(15)
                     except Exception as e3:
                         logging.info("Error in automatic purchase")
