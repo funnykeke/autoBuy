@@ -148,7 +148,7 @@ if __name__ == '__main__':
                                 wait.until(lambda driver: driver.find_element_by_id("quantity"))
                                 time.sleep(0.2)
                                 driver.execute_script('document.getElementById("quantity").click()')
-                                time.sleep(0.2)
+                                wait.until(lambda driver: driver.find_element_by_id("quantity_0"))
                                 html_temp = HTML(driver.page_source)
                                 res = html.xpath("//li[@class='a-dropdown-item'][last()]/a/@id")
                                 driver.execute_script(f'document.getElementById("{res[0]}").click()')
