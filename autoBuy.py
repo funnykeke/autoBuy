@@ -197,7 +197,7 @@ if __name__ == '__main__':
                                     driver.execute_script(f'document.getElementById("{res[0]}").click()')
                                     time.sleep(0.1)
                                     html_temp = HTML(driver.page_source)
-                                    res = html.xpath("//li[@class='a-dropdown-item']/a/@id")
+                                    res = html_temp.xpath("//li[@class='a-dropdown-item']/a/@id")
                                     driver.execute_script(
                                         f'document.getElementById("{res[-2] if len(res) > 1 else res[-1]}").click()')
                             except:
