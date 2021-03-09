@@ -150,7 +150,7 @@ if __name__ == '__main__':
                                 driver.execute_script('document.getElementById("quantity").click()')
                                 wait.until(lambda driver: driver.find_element_by_id("quantity_0"))
                                 html_temp = HTML(driver.page_source)
-                                res = html.xpath("//li[@class='a-dropdown-item'][last()]/a/@id")
+                                res = html_temp.xpath("//li[@class='a-dropdown-item'][last()]/a/@id")
                                 driver.execute_script(f'document.getElementById("{res[0]}").click()')
                         except:
                             logging.info("choose quantity error with buy it now!")
