@@ -138,10 +138,20 @@ if __name__ == '__main__':
                     buy_asins = {}
                     handle_temp = driver.window_handles[-1]
                     driver.switch_to.window(handle_temp)
+                    handle_url = driver.current_url
                     try:
                         element1 = wait.until(EC.presence_of_element_located((By.ID, "buy-now-button")), message="111")
                         wait.until(lambda driver: driver.find_element_by_id("buy-now-button"))
-                        time.sleep(1)
+                        try:
+                            html_temp = HTML(driver.page_source)
+                            if html_temp.xpath("//select[@id='quantity']"):
+                                driver.execute_script('document.getElementById("quantity").click()')
+                                time.sleep(0.1)
+                                html_temp = HTML(driver.page_source)
+                                res = html.xpath("//li[@class='a-dropdown-item'][last()]/a/@id")
+                                driver.execute_script(f'document.getElementById("{res[0]}").click()')
+                        except:
+                            logging.info("choose quantity error with buy it now!")
                         driver.execute_script('document.getElementById("buy-now-button").click()')
                         while not re.findall("Place your order", driver.page_source) and not re.findall(
                                 "turbo-checkout-iframe", driver.page_source) and while_count < 100:
@@ -154,16 +164,52 @@ if __name__ == '__main__':
                             wait.until(lambda driver: driver.find_element_by_id("bottomSubmitOrderButtonId-announce"))
                             driver.execute_script(
                                 'document.getElementById("bottomSubmitOrderButtonId-announce").click()')
+                            logging.info("buy successfully with buy it now!")
                         if re.findall("turbo-checkout-iframe", driver.page_source):
                             driver.switch_to.frame("turbo-checkout-iframe")
                             wait.until(lambda driver: driver.find_element_by_id("turbo-checkout-place-order-button"))
                             driver.execute_script('document.getElementById("turbo-checkout-pyo-button").click()')
-                        logging.info("buy successfully!")
-                        time.sleep(15)
+                            logging.info("buy successfully with buy it now!")
                     except Exception as e3:
-                        logging.info("Error in automatic purchase")
+                        logging.info("Error in automatic purchase with buy it now")
                         logging.error(e3)
-                        time.sleep(15)
+                        # 用add to cart 购买
+                        driver.get(handle_url)
+                        try:
+                            element1 = wait.until(EC.presence_of_element_located((By.ID, "add-to-cart-button")),
+                                                  message="111")
+                            wait.until(lambda driver: driver.find_element_by_id("add-to-cart-button"))
+                            driver.execute_script('document.getElementById("add-to-cart-button").click()')
+                            while not re.findall("hlb-ptc-btn-native", driver.page_source) and while_count < 100:
+                                time.sleep(0.1)
+                                while_count += 1
+                            while_count = 0
+                            wait.until(lambda driver: driver.find_element_by_id("hlb-ptc-btn-native"))
+                            driver.execute_script('document.getElementById("hlb-ptc-btn-native").click()')
+                            wait.until(lambda driver: driver.find_element_by_id("bottomSubmitOrderButtonId-announce"))
+                            html_temp = HTML(driver.page_source)
+                            try:
+                                res = html_temp.xpath("//select[contains(@id,'quantity')]/@id")
+                                if res:
+                                    driver.execute_script(f'document.getElementById("{res[0]}").click()')
+                                    time.sleep(0.1)
+                                    html_temp = HTML(driver.page_source)
+                                    res = html.xpath("//li[@class='a-dropdown-item']/a/@id")
+                                    driver.execute_script(
+                                        f'document.getElementById("{res[-2] if len(res) > 1 else res[-1]}").click()')
+                            except:
+                                logging.info("choose quantity error with add to cart!")
+                            time.sleep(0.2)
+                            while re.findall("section-overwrap", driver.page_source) and while_count < 100:
+                                time.sleep(0.1)
+                                while_count += 1
+                            while_count = 0
+                            driver.execute_script(
+                                'document.getElementById("bottomSubmitOrderButtonId-announce").click()')
+                            logging.info("buy successfully with add to cart!")
+                        except Exception as e4:
+                            logging.info("Error in automatic purchase with add to cart")
+                            logging.error(e4)
                 if count % 90 == 0:
                     driver.switch_to.window(handles[0])
                     driver.refresh()
