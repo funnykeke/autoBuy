@@ -115,8 +115,10 @@ if __name__ == '__main__':
                                 captcha_count += captcha_count
                                 captcha_url = html.xpath("//div[@class='a-box']//img/@src")[0]
                                 field_keywords = discern(captcha_url)
+                                time.sleep(1)
                                 driver.execute_script(f'document.getElementById("captchacharacters").value="{field_keywords}"')
-                                document.getElementById("quantity").click()
+                                time.sleep(1)
+                                driver.find_element_by_class_name("a-button-text").click()
                                 captcha_count = 0
                                 driver.refresh()
                     except:
