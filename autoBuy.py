@@ -118,7 +118,7 @@ if __name__ == '__main__':
                                 time.sleep(1)
                                 driver.execute_script(f'document.getElementById("captchacharacters").value="{field_keywords}"')
                                 time.sleep(1)
-                                driver.find_element_by_class_name("a-button-text").click()
+                                driver.execute_script('document.getElementsByClassName("a-button-text")[0].click()')
                                 captcha_count = 0
                                 driver.refresh()
                     except:
