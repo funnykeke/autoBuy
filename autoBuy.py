@@ -84,7 +84,10 @@ if __name__ == '__main__':
             time.sleep(0.4)
             driver.get(link)
             wait = WebDriverWait(driver, 10, 0.2)
-            wait.until(lambda driver: driver.find_element_by_xpath("//div[@data-index='9']"))
+            try:
+                wait.until(lambda driver: driver.find_element_by_xpath("//div[@data-index='9']"))
+            except:
+                pass
             text = driver.page_source
             html = HTML(text)
             now_asins = {}
@@ -115,9 +118,11 @@ if __name__ == '__main__':
                                 captcha_count += captcha_count
                                 captcha_url = html.xpath("//div[@class='a-box']//img/@src")[0]
                                 field_keywords = discern(captcha_url)
-                                driver.find_element_by_xpath("//input[@name='field-keywords']").send_keys(
-                                    field_keywords)
+                                time.sleep(1)
+                                driver.execute_script(f'document.getElementById("captchacharacters").value="{field_keywords}"')
+                                time.sleep(1)
                                 driver.find_element_by_xpath("//button[@type='submit']").send_keys(Keys.ENTER)
+                                time.sleep(1)
                                 captcha_count = 0
                                 driver.refresh()
                     except:
@@ -209,6 +214,7 @@ if __name__ == '__main__':
                             time.sleep(0.1)
                             while_count += 1
                         while_count = 0
+                        time.sleep(0.5)
                         driver.execute_script(
                             'document.getElementById("bottomSubmitOrderButtonId-announce").click()')
                         logging.info("buy successfully with add to cart!")
