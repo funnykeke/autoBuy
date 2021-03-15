@@ -46,7 +46,7 @@ handle_url = ''
 
 
 def discern(disUrl):
-    data = {"userid": '', "apikey": '',
+    data = {"userid": 'yux2023', "apikey": 'FpD7OQT8NJxOVKzmQtay',
             "data": base64.b64encode(requests.get(disUrl).content).decode()}
     result = requests.post('https://api.apitruecaptcha.org/one/gettext', json=data).json()
     logging.info(result)
@@ -117,7 +117,7 @@ def buy_with_cart():
 def buy_it_now():
     global while_count
     try:
-        wait.until(EC.presence_of_element_located((By.ID, "buy-now-button")), message="111")
+        # wait.until(EC.presence_of_element_located((By.ID, "buy-now-button")), message="111")
         wait.until(lambda driver: driver.find_element_by_id("buy-now-button"))
         try:
             html_temp = HTML(driver.page_source)
