@@ -112,7 +112,7 @@ def buy_with_cart(asin_link):
             time.sleep(0.1)
             while_count += 1
         while_count = 0
-        time.sleep(0.5)
+        time.sleep(1)
         driver.execute_script(
             'document.getElementById("bottomSubmitOrderButtonId-announce").click()')
         logging.info("buy successfully with add to cart!")
@@ -126,7 +126,7 @@ def buy_with_cart(asin_link):
 def buy_it_now():
     global while_count
     try:
-        # wait.until(EC.presence_of_element_located((By.ID, "buy-now-button")), message="111")
+        wait.until(EC.presence_of_element_located((By.ID, "buy-now-button")), message="111")
         wait.until(lambda driver: driver.find_element_by_id("buy-now-button"))
         try:
             html_temp = HTML(driver.page_source)
@@ -156,6 +156,7 @@ def buy_it_now():
         if re.findall("turbo-checkout-iframe", driver.page_source):
             driver.switch_to.frame("turbo-checkout-iframe")
             wait.until(lambda driver: driver.find_element_by_id("turbo-checkout-place-order-button"))
+            time.sleep(1)
             driver.execute_script('document.getElementById("turbo-checkout-pyo-button").click()')
             logging.info("buy successfully with buy it now!")
         return True
