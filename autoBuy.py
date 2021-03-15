@@ -79,9 +79,10 @@ def resetAsins():
         asins = asins1
 
 
-def buy_with_cart():
+def buy_with_cart(asin_link):
     global while_count
     try:
+        driver.get(asin_link)
         wait.until(EC.presence_of_element_located((By.ID, "add-to-cart-button")), message="111")
         wait.until(lambda driver: driver.find_element_by_id("add-to-cart-button"))
         driver.execute_script('document.getElementById("add-to-cart-button").click()')
@@ -260,9 +261,10 @@ if __name__ == '__main__':
                     driver.switch_to.window(handle_temp)
                     handle_url = driver.current_url
                     buy_it_now()
+                    time.sleep(0.5)
                     # 用add to cart 购买
                     driver.get(handle_url)
-                    while buy_with_cart():
+                    while buy_with_cart(handle_url):
                         logging.info("尚有存货正在继续购买！")
             except Exception as e:
                 logging.error(e)
