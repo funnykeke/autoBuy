@@ -22,6 +22,7 @@ links = settings.links
 count1 = settings.count1
 count2 = settings.count2
 asins = settings.asins
+asins1 = asins
 logging.basicConfig(format='%(asctime)s - %(pathname)s[line:%(lineno)d] '
                            '- %(levelname)s: %(message)s', level=logging.INFO)
 chrome_options = webdriver.ChromeOptions()
@@ -69,6 +70,13 @@ def deletAsin():
             logging.info(f"Removed {a} from asins")
         except Exception as e1:
             logging.error(e1)
+
+
+def resetAsins():
+    while True:
+        time.sleep(1800)
+        global asins
+        asins = asins1
 
 
 def buy_with_cart():
@@ -182,6 +190,8 @@ if __name__ == '__main__':
     driver.switch_to.window(handles[1])
     t1 = threading.Thread(target=deletAsin)
     t1.start()
+    t2 = threading.Thread(target=resetAsins)
+    t2.start()
     while True:
         for link in links:
             time.sleep(0.4)
