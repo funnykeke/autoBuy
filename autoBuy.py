@@ -21,6 +21,7 @@ path = settings.path
 links = settings.links
 count1 = settings.count1
 count2 = settings.count2
+count3 = settings.count3
 asins = settings.asins
 asins1 = asins
 logging.basicConfig(format='%(asctime)s - %(pathname)s[line:%(lineno)d] '
@@ -39,6 +40,7 @@ capa["pageLoadStrategy"] = "none"
 driver = webdriver.Chrome("chromedriver.exe", desired_capabilities=capa, options=chrome_options)  #
 countlist1 = [count1 - 1, count1, count1 + 1, count1 + 2, count1 + 3, count1 + 4]
 countlist2 = [count2 - 1, count2, count2 + 1, count2 + 2, count2 + 3, count2 + 4]
+countlist3 = [count3 - 1, count3, count3 + 1, count3 + 2, count3 + 3, count3 + 4]
 
 count = 0
 while_count = 0
@@ -213,8 +215,10 @@ if __name__ == '__main__':
             for count in range(2):
                 if links.index(link) == 0:
                     countlist = countlist1
-                else:
+                elif links.index(link) == 1:
                     countlist = countlist2
+                else:
+                    countlist = countlist3
                 while now_asins.__len__() not in countlist:
                     # print(str(links.index(link)) + ': ' + str(now_asins.__len__()))
                     time.sleep(0.2)
